@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nomogram Web App</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        #title {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            font-size: 24px;
+        }
+        #text-box {
+            margin: 18px 30px 10px 30px; 
+            font-size: 14px;
+            color: #333;
+        }
+        #content {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            margin-top: 10px;
+        }
+        #nomogram-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background-color: white;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        #tabs {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+        }
+        .tab {
+            background-color: #f1f1f1;
+            padding: 10px 20px;
+            margin-right: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .tab.active {
+            background-color: #ddd;
+        }
+        .nomogram, .calibration-curve, .model-details {
+            width: calc(100% - 20px);
+            height: auto;
+        }
+        .calibration-curve {
+            margin-left: 20px;
+        }
+        .model-details {
+            display: none;
+            font-size: 14px;
+            color: #333;
+        }
+        table {
+            width: calc(100% - 20px);
+            border-collapse: collapse;
+            margin-top: 55px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 10px;
+            padding-left: 60px;
+            background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown {
+            margin: 5px 0;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .label {
+            margin: 10px 0 5px 0;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            background-color: #e7f3fe;
+            padding: 0px;
+            border-radius: 10px;
+            border: 1px solid #b3d7ff;
+        }
+        #probability {
+            font-weight: bold;
+            color: #333;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">
+        Predicting the Probability of a Poor Outcome in Squamous Cell Carcinoma
+    </div>
+    <div id="text-box">
+        This risk calculator is based on the NYU Redcap database data for cutaneous squamous cell carcinoma (cSCC). National Comprehensive Cancer Network (NCCN) guidelines recommend adjuvant radiation therapy (ART) for cSCC with extensive perineural invasion (PNI), large nerve involvement (nerve caliber ≥0.1 mm), or positive margins postsurgery. This website is NOT intended to identify patients who do not need adjuvant radiation therapy. It is merely a visual aid that can help clinicians understand the contributing factors to poor outcome risk in cSCC.
+    </div>
+    <div id="content">
+        <div id="nomogram-container">
+            <div id="tabs" style="align-self: flex-start; margin-bottom: 0; padding-bottom: 0;">
+                <div id="tab-nomogram" class="tab active" onclick="showNomogram()">Nomogram</div>
+                <div id="tab-calibration" class="tab" onclick="showCalibration()">Calibration Curve</div>
+                <div id="tab-model-details" class="tab" onclick="showModelDetails()">Model Details</div>
+            </div>
+            <svg id="nomogram" class="nomogram" viewBox="0 80 925 717" preserveAspectRatio="xMidYMid meet" style="margin-top: 0; padding-top: 0;"></svg>
+            <img id="calibration-curve" src="calibrationCurve.png" class="calibration-curve" style="display: none;">
+            <div id="model-details" class="model-details">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Coefficient</th>
+                            <th>Standard Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Intercept</td>
+                            <td>-6.7622379</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>preop_max=≥4</td>
+                            <td>3.3753419</td>
+                            <td>0.704488431</td>
+                        </tr>
+                        <tr>
+                            <td>preop_max=2-4</td>
+                            <td>2.111243</td>
+                            <td>0.465364592</td>
+                        </tr>
+                        <tr>
+                            <td>p.site.risk=H</td>
+                            <td>1.4093423</td>
+                            <td>0.465417263</td>
+                        </tr>
+                        <tr>
+                            <td>p.site.risk=M</td>
+                            <td>0.3995579</td>
+                            <td>0.580852041</td>
+                        </tr>
+                        <tr>
+                            <td>Differentiation=poorly differentiated</td>
+                            <td>1.4014543</td>
+                            <td>0.621628512</td>
+                        </tr>
+                        <tr>
+                            <td>SubQ_Invasion=Yes</td>
+                            <td>3.675848</td>
+                            <td>0.80871646</td>
+                        </tr>
+                        <tr>
+                            <td>PNI=Yes</td>
+                            <td>1.9979382</td>
+                            <td>0.671203262</td>
+                        </tr>
+                        <tr>
+                            <td>Immunosuppression=HIV/NHL/Other</td>
+                            <td>0.9468674</td>
+                            <td>0.644527448</td>
+                        </tr>
+                        <tr>
+                            <td>Immunosuppression=CLL/Transplant</td>
+                            <td>1.9681431</td>
+                            <td>0.467510808</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="controls">
+            <label for="tumor_size" class="label">Tumor Size:</label>
+            <select id="tumor_size" class="dropdown">
+                <option value="">Select Tumor Size</option>
+                <option value="<2 cm"><2 cm</option>
+                <option value="2-4 cm">2-4 cm</option>
+                <option value=">= 4 cm">>= 4 cm</option>
+            </select>
+            
+            <label for="primary_site_risk" class="label">Primary Site Risk:</label>
+            <select id="primary_site_risk" class="dropdown">
+                <option value="">Select Primary Site Risk</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            
+            <label for="differentiation" class="label">Differentiation:</label>
+            <select id="differentiation" class="dropdown">
+                <option value="">Select Differentiation</option>
+                <option value="well to moderately differentiated">Well to Moderately Differentiated</option>
+                <option value="poorly differentiated">Poorly Differentiated</option>
+            </select>
+            
+            <label for="subcutaneous_invasion" class="label">Subcutaneous Invasion:</label>
+            <select id="subcutaneous_invasion" class="dropdown">
+                <option value="">Select Subcutaneous Invasion</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            
+            <label for="perineural_invasion" class="label">Perineural Invasion:</label>
+            <select id="perineural_invasion" class="dropdown">
+                <option value="">Select Perineural Invasion</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+            
+            <label for="immunosuppression" class="label">Immunosuppression:</label>
+            <select id="immunosuppression" class="dropdown">
+                <option value="">Select Immunosuppression</option>
+                <option value="none/unknown">None/Unknown</option>
+                <option value="HIV/NHL/other">HIV/NHL/Other</option>
+                <option value="CLL/transplant">CLL/Transplant</option>
+            </select>
+            
+            <div id="result">
+                <p>Probability of poor outcome: <span id="probability"></span></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showNomogram() {
+            document.getElementById('nomogram').style.display = 'block';
+            document.getElementById('calibration-curve').style.display = 'none';
+            document.getElementById('model-details').style.display = 'none';
+            document.getElementById('tab-nomogram').classList.add('active');
+            document.getElementById('tab-calibration').classList.remove('active');
+            document.getElementById('tab-model-details').classList.remove('active');
+        }
+
+        function showCalibration() {
+            document.getElementById('nomogram').style.display = 'none';
+            document.getElementById('calibration-curve').style.display = 'block';
+            document.getElementById('model-details').style.display = 'none';
+            document.getElementById('tab-nomogram').classList.remove('active');
+            document.getElementById('tab-calibration').classList.add('active');
+            document.getElementById('tab-model-details').classList.remove('active');
+        }
+
+        function showModelDetails() {
+            document.getElementById('nomogram').style.display = 'none';
+            document.getElementById('calibration-curve').style.display = 'none';
+            document.getElementById('model-details').style.display = 'block';
+            document.getElementById('tab-nomogram').classList.remove('active');
+            document.getElementById('tab-calibration').classList.remove('active');
+            document.getElementById('tab-model-details').classList.add('active');
+        }
+
+        // Show the nomogram by default
+        showNomogram();
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
