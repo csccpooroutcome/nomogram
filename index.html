@@ -150,6 +150,59 @@
             color: #555;
             margin-top: auto;
         }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            #main-container {
+                flex-direction: column;
+                padding: 0;
+            }
+            #content {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 0;
+                max-width: 100%;
+                width: 100%;
+            }
+            #nomogram-container {
+                width: 100%;
+                padding: 0;
+                box-shadow: none;
+            }
+            #tabs {
+                width: 100%;
+                justify-content: space-around;
+            }
+            .tab {
+                width: 100%;
+                margin: 5px 0;
+                text-align: center;
+            }
+            #controls {
+                width: 100%;
+                max-width: none;
+                padding: 10px;
+                box-shadow: none;
+            }
+            .dropdown, .label, #result {
+                max-width: none;
+                width: 100%;
+            }
+            #result {
+                text-align: center;
+            }
+            .nomogram {
+                width: 100%;
+                height: auto;
+            }
+            #calibration-curve {
+                width: 100%;
+            }
+            table {
+                width: 100%;
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body>
