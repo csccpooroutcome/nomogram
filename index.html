@@ -175,13 +175,14 @@
             #tabs {
                 width: 100%;
                 justify-content: space-around;
-                padding: 10px; /* Added padding */
+                padding: 5px; /* Added padding */
                 box-sizing: border-box;
             }
             .tab {
-                width: 100%;
-                margin: 5px 0;
+                width: calc(33.33% - 10px); /* Adjust width to fit the screen with space between buttons */
+                margin: 5px; /* Space between buttons */
                 text-align: center;
+                font-size: 12px; /* Smaller text */
             }
             #controls {
                 width: 100%;
@@ -189,12 +190,14 @@
                 padding: 10px; /* Added padding */
                 box-shadow: none;
                 box-sizing: border-box;
+                margin-top: 10px; /* Decreased space between the nomogram and controls */
             }
             .dropdown, .label, #result {
                 max-width: none;
                 width: 100%;
-                padding: 10px; /* Added padding */
+                padding: 5px; /* Added padding */
                 box-sizing: border-box;
+                margin: 5px 0; /* Decreased space between dropdowns and labels */
             }
             #result {
                 text-align: center;
@@ -211,8 +214,12 @@
             table {
                 width: 100%;
                 margin: 0;
-                padding: 10px; /* Added padding */
+                padding: 5px; /* Added padding */
                 box-sizing: border-box;
+                font-size: 12px; /* Smaller text */
+            }
+            th, td {
+                padding: 4px; /* Smaller padding for table cells */
             }
         }
 
