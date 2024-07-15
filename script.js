@@ -4,7 +4,7 @@ const svg = d3.select("#nomogram")
     .attr("height", "100%");
 
 svg.append("image")
-    .attr("xlink:href", "nomogram.jpeg")
+    .attr("xlink:href", "nomogram.jpeg")  // Make sure this path is correct
     .attr("width", "100%")
     .attr("height", "100%");
 
@@ -22,7 +22,6 @@ let markers = {
 let sumPosition = 0;
 
 // Function to check if all markers are set
-// TODO - get rid of this and dynamically calc prob even if all markers not set
 function allMarkersSet() {
     return Object.values(markers).every(value => value !== null && value !== "");
 }
@@ -34,33 +33,33 @@ function calculatePosition(value, variable) {
         if (value === "<2 cm") {
             position = 260;
         } else if (value === "2-4 cm") {
-            position = 604;
+            position = 564;
         } else if (value === ">= 4 cm") {
-            position = 809;
+            position = 859;
         }
     } else if (variable === "primary_site_risk") {
         if (value === "low") {
             position = 260;
         } else if (value === "medium") {
-            position = 324;
+            position = 298;
         } else if (value === "high") {
-            position = 488;
+            position = 451;
         }
     } else if (variable === "differentiation") {
         if (value === "well to moderately differentiated") {
             position = 260;
         } else if (value === "poorly differentiated") {
-            position = 488;
+            position = 472;
         }
     } else if (variable === "subcutaneous_invasion") {
         if (value === "yes") {
-            position = 857;
+            position = 570;
         } else if (value === "no") {
             position = 260;
         }
     } else if (variable === "perineural_invasion") {
         if (value === "yes") {
-            position = 585;
+            position = 620;
         } else if (value === "no") {
             position = 260;
         }
@@ -68,9 +67,9 @@ function calculatePosition(value, variable) {
         if (value === "none/unknown") {
             position = 260;
         } else if (value === "HIV/NHL/other") {
-            position = 413;
+            position = 466;
         } else if (value === "CLL/transplant") {
-            position = 580;
+            position = 626;
         }
     } else {
         // Default position if no match found
@@ -81,16 +80,16 @@ function calculatePosition(value, variable) {
 
 // Logistic regression model coefficients
 const modelParams = {
-    intercept: -6.7622,
-    preop_max_4: 3.3753,
-    preop_max_2_4: 2.1112,
-    p_site_risk_H: 1.4093,
-    p_site_risk_M: 0.3996,
-    Differentiation_poorly: 1.4015,
-    SubQ_Invasion_Yes: 3.6758,
-    PNI_Yes: 1.9979,
-    Immunosuppression_HIV_NHL_Other: 0.9469,
-    Immunosuppression_CLL_Transplant: 1.9681
+    intercept: -6.2208973,
+    preop_max_4: 3.2500156,
+    preop_max_2_4: 1.6511590,
+    p_site_risk_H: 1.0434334,
+    p_site_risk_M: 0.2058281,
+    Differentiation_poorly: 1.1481378,
+    SubQ_Invasion_Yes: 1.6853198,
+    PNI_Yes: 1.9425454,
+    Immunosuppression_HIV_NHL_Other: 1.1225877,
+    Immunosuppression_CLL_Transplant: 1.9826142
 };
 
 // Function to calculate probability using logistic regression model
@@ -114,12 +113,12 @@ function calculateProbability(markers) {
 
 // Define y positions for each row
 const yPositions = {
-    tumor_size: 215,
-    primary_site_risk: 260,
-    differentiation: 305,
-    subcutaneous_invasion: 350,
-    perineural_invasion: 395,
-    immunosuppression: 440
+    tumor_size: 202,
+    primary_site_risk: 251,
+    differentiation: 301,
+    subcutaneous_invasion: 351,
+    perineural_invasion: 401,
+    immunosuppression: 450
 };
 
 // Function to calculate the sum dot position
@@ -133,33 +132,33 @@ function calculateSumPosition() {
                 if (markers[variable] === "<2 cm") {
                     pointValue = 0;
                 } else if (markers[variable] === "2-4 cm") {
-                    pointValue = 58;
+                    pointValue = 51;
                 } else if (markers[variable] === ">= 4 cm") {
-                    pointValue = 92;
+                    pointValue = 100;
                 }
             } else if (variable === "primary_site_risk") {
                 if (markers[variable] === "low") {
                     pointValue = 0;
                 } else if (markers[variable] === "medium") {
-                    pointValue = 11;
+                    pointValue = 7;
                 } else if (markers[variable] === "high") {
-                    pointValue = 39;
+                    pointValue = 33;
                 }
             } else if (variable === "differentiation") {
                 if (markers[variable] === "well to moderately differentiated") {
                     pointValue = 0;
                 } else if (markers[variable] === "poorly differentiated") {
-                    pointValue = 39;
+                    pointValue = 35;
                 }
             } else if (variable === "subcutaneous_invasion") {
                 if (markers[variable] === "yes") {
-                    pointValue = 100;
+                    pointValue = 52;
                 } else if (markers[variable] === "no") {
                     pointValue = 0;
                 }
             } else if (variable === "perineural_invasion") {
                 if (markers[variable] === "yes") {
-                    pointValue = 55;
+                    pointValue = 60;
                 } else if (markers[variable] === "no") {
                     pointValue = 0;
                 }
@@ -167,28 +166,57 @@ function calculateSumPosition() {
                 if (markers[variable] === "none/unknown") {
                     pointValue = 0;
                 } else if (markers[variable] === "HIV/NHL/other") {
-                    pointValue = 26;
+                    pointValue = 35;
                 } else if (markers[variable] === "CLL/transplant") {
-                    pointValue = 54;
+                    pointValue = 61;
                 }
             }
             sum += pointValue;
         }
     }
     // Max out sum at 350 points to not exceed the span of the line on the nomogram
-    if (sum > 350) { sum = 350; }
+    if (sum > 300) { sum = 300; }
     // Modify sum so the position is correctly scaled onto the "total points" row.
     // "total points" row start position == 260 px (0 points)
-    // "total points" row end position == 857 px (350 points)
-    // Linear transformation formula: y = 1.706 * x + 260
-    sum = 1.706 * sum + 260;
+    // "total points" row end position == 859 px (300 points)
+    // Linear transformation formula: y = 1.9967 * x + 260
+    sum = 1.9967 * sum + 260;
     return sum;
+}
+
+// Function to determine AJCC8 Stage
+function determineAJCC8Stage(markers) {
+    if (markers.tumor_size === ">= 4 cm" || markers.perineural_invasion === "yes" || markers.subcutaneous_invasion === "yes") {
+        return "T3";
+    } else if (markers.tumor_size === "2-4 cm") {
+        return "T2";
+    } else {
+        return "T1";
+    }
+}
+
+// Function to determine BWH Stage
+function determineBWHStage(markers) {
+    let riskFactors = 0;
+    if (markers.tumor_size === "2-4 cm" || markers.tumor_size === ">= 4 cm") riskFactors++;
+    if (markers.differentiation === "poorly differentiated") riskFactors++;
+    if (markers.perineural_invasion === "yes") riskFactors++;
+    if (markers.subcutaneous_invasion === "yes") riskFactors++;
+
+    if (riskFactors === 4) {
+        return "T3";
+    } else if (riskFactors === 2 || riskFactors === 3) {
+        return "T2b";
+    } else if (riskFactors === 1) {
+        return "T2a";
+    } else {
+        return "T1";
+    }
 }
 
 // Update markers and dashed lines
 function updateMarkers() {
     for (let variable in markers) {
-        // markers[variable] !== "" is true when the user re-selects the default option in the dropdown (ex. Select tumor size)
         if (markers[variable] !== null && markers[variable] !== "" && markers[variable] !== "select " + variable.replace(/_/g, " ")) {
             const position = calculatePosition(markers[variable], variable);
             const yPos = yPositions[variable];
@@ -206,7 +234,7 @@ function updateMarkers() {
                     .attr("x1", position)
                     .attr("y1", yPos)
                     .attr("x2", position)
-                    .attr("y2", 168)  // Extend upwards to 168
+                    .attr("y2", 151)  // Extend upwards to 150
                     .attr("stroke", "red")
                     .attr("stroke-width", 2)  // Increased stroke width
                     .attr("stroke-dasharray", "5,5")
@@ -216,7 +244,7 @@ function updateMarkers() {
                     .attr("x1", position)
                     .attr("y1", yPos)
                     .attr("x2", position)
-                    .attr("y2", 168)  // Extend upwards to 168
+                    .attr("y2", 151)  // Extend upwards to 150
                     .attr("stroke", "red")
                     .attr("stroke-width", 2)  // Increased stroke width
                     .style("visibility", "visible");
@@ -233,21 +261,39 @@ function updateMarkers() {
 
     svg.select("#sum-marker")
         .attr("cx", sumPosition)
-        .attr("cy", 486)
+        .attr("cy", 500)
         .style("visibility", "visible");
 
-    let cappedSumPosition = Math.min(sumPosition, 785);
+    let cappedSumPosition = Math.min(sumPosition, 728);
     svg.select("#sum-marker-bottom")
         .attr("cx", cappedSumPosition)
-        .attr("cy", 530)
+        .attr("cy", 550)
         .style("visibility", "visible");
 
     // Calculate and display probability
     const probability = calculateProbability(markers);
     console.log('Probability (decimal):', probability); // Debugging line
-    const percentage = Math.round(probability * 100) + "%";
-    console.log('Probability (percentage):', percentage); // Debugging line
-    d3.select("#probability").text(percentage);
+    let percentage = Math.round(probability * 100);
+    console.log('Probability (percentage):', percentage + "%"); // Debugging line
+
+    // Check if the percentage is greater than 80
+    if (percentage > 80) {
+        percentage = ">80%";
+    } else {
+        percentage = percentage + "%";
+    }
+
+// Display the probability
+d3.select("#probability").text(percentage);
+
+
+    // Determine and display AJCC8 Stage
+    const ajcc8Stage = determineAJCC8Stage(markers);
+    d3.select("#ajcc8-stage").text(ajcc8Stage);
+
+    // Determine and display BWH Stage
+    const bwhStage = determineBWHStage(markers);
+    d3.select("#bwh-stage").text(bwhStage);
 }
 
 // Create markers and dashed lines for each variable
