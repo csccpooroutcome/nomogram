@@ -137,6 +137,26 @@
             border-radius: 10px;
             border: 1px solid #b3d7ff;
         }
+        #stages-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 300px;
+            margin-top: 12px;
+            gap: 10px; /* Add space between the two boxes */
+        }
+
+        #ajcc8-container, #bwh-container {
+            background-color: #e7f3fe;
+            padding: 0px;
+            border-radius: 10px;
+            border: 1px solid #b3d7ff;
+            width: calc(50% - 5px); /* Adjust width to accommodate the gap */
+            text-align: center;
+            height: 50px; /* Set the height to match the Probability box */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         #probability {
             font-weight: bold;
             color: #333;
@@ -238,7 +258,7 @@
         Predicting the Probability of a Poor Outcome in Squamous Cell Carcinoma
     </div>
     <div id="text-box">
-        This risk calculator is based on the NYU Redcap database data for cutaneous squamous cell carcinoma (cSCC). National Comprehensive Cancer Network (NCCN) guidelines recommend adjuvant radiation therapy (ART) for cSCC with extensive perineural invasion (PNI), large nerve involvement (nerve caliber ≥0.1 mm), or positive margins postsurgery. This website is NOT intended to identify patients who do not need adjuvant radiation therapy. It is merely a visual aid that can help clinicians understand the contributing factors to poor outcome risk in cSCC.
+        This risk calculator is based on clinical data of cutaneous squamous cell carcinoma (cSCC) tumors treated at one institution and the National Comprehensive Cancer Network (NCCN) guidelines should still be utilized to guide the management of cSCC. The goal of this website is to act as a visual tool that can help clinicians understand contributing factors to poor outcome risk in cSCC. This website is NOT intended to guide type of adjuvant treatment or to identify patients who do not need adjuvant therapy.
     </div>
     <div id="main-container">
         <div id="content">
@@ -262,53 +282,53 @@
                         <tbody>
                             <tr>
                                 <td>Intercept</td>
-                                <td>-6.7622379</td>
+                                <td>-6.220897</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td>preop_max=≥4</td>
-                                <td>3.3753419</td>
-                                <td>0.704488431</td>
+                                <td>preop_max=2-4</td>
+                                <td>1.651159</td>
+                                <td>0.4171843</td>
                             </tr>
                             <tr>
-                                <td>preop_max=2-4</td>
-                                <td>2.111243</td>
-                                <td>0.465364592</td>
+                                <td>preop_max=≥4</td>
+                                <td>3.2500156</td>
+                                <td>0.6174236</td>
                             </tr>
                             <tr>
                                 <td>p.site.risk=H</td>
-                                <td>1.4093423</td>
-                                <td>0.465417263</td>
+                                <td>1.0434334</td>
+                                <td>0.4220401</td>
                             </tr>
                             <tr>
                                 <td>p.site.risk=M</td>
-                                <td>0.3995579</td>
-                                <td>0.580852041</td>
+                                <td>0.2058281</td>
+                                <td>0.507396</td>
                             </tr>
                             <tr>
                                 <td>Differentiation=poorly differentiated</td>
-                                <td>1.4014543</td>
-                                <td>0.621628512</td>
+                                <td>1.1481378</td>
+                                <td>0.5634972</td>
                             </tr>
                             <tr>
                                 <td>SubQ_Invasion=Yes</td>
-                                <td>3.675848</td>
-                                <td>0.80871646</td>
+                                <td>1.6853198</td>
+                                <td>0.5018853</td>
                             </tr>
                             <tr>
                                 <td>PNI=Yes</td>
-                                <td>1.9979382</td>
-                                <td>0.671203262</td>
+                                <td>1.9425454</td>
+                                <td>0.5455349</td>
                             </tr>
                             <tr>
                                 <td>Immunosuppression=HIV/NHL/Other</td>
-                                <td>0.9468674</td>
-                                <td>0.644527448</td>
+                                <td>1.1225877</td>
+                                <td>0.5448413</td>
                             </tr>
                             <tr>
                                 <td>Immunosuppression=CLL/Transplant</td>
-                                <td>1.9681431</td>
-                                <td>0.467510808</td>
+                                <td>1.9826142</td>
+                                <td>0.4032236</td>
                             </tr>
                         </tbody>
                     </table>
@@ -363,7 +383,16 @@
                 <div id="result">
                     <p>Probability of poor outcome<sup>*</sup>: <span id="probability"></span></p>
                 </div>
+                <div id="stages-container">
+                    <div id="ajcc8-container">
+                        <p>AJCC8 Stage: <span id="ajcc8-stage"></span></p>
+                    </div>
+                    <div id="bwh-container">
+                        <p>BWH Stage: <span id="bwh-stage"></span></p>
+                    </div>
+                </div>
                 <p style="font-size: 12px; max-width: 300px; #555;"><sup>*</sup> “Poor outcome” is defined as local recurrence, nodal metastasis, distant metastasis, or disease-specific death.</p>
+                <p style="font-size: 12px; max-width: 300px; #555;"><sup>*</sup> Past studies have shown that less than 80% of BWH stage 3 tumors lead to disease-specific poor outcome. As shown in the calibration curve, the model has a tendency to over predict at high probabilities.</p>
                 <p style="font-size: 12px; max-width: 300px; #555;"><sup>**</sup> Area H = "mask areas" of face (central face, eyelids, eyebrows, periorbital, nose, lips [cutaneous and vermillion], chin, mandible, preauricular and postauricular skin/skin, temple, and ear), genitalia, hands, and feet.<br>
                     Area M = cheeks, forehead, scalp, neck, and pretibia<br>
                     Area L = trunk and extremities (excluding hands, nail units, pretibia, ankles, and feet)</p>
@@ -372,10 +401,15 @@
     </div>
     <div id="disclaimer">
         <b>Disclaimer: NOT Medical Advice.</b> <br>
-        Use of this tool is subject to agreeing to the following:<br>
-        1. The developers of this calculator give no guarantees regarding the accuracy, completeness, or usefulness of any estimate generated by the calculator, and will have no liability for any decisions made by either clinician or patient, regarding any treatment decisions made or not made, actions taken or not taken, or consequences of treatment or lack of treatment.<br>
-        2. Use of this tool or website does not constitute medical advice, an opinion, diagnosis, service, or recommendation of any kind. This tool is for general information and educational purposes only and is not specifically recommended by any doctor or other healthcare provider. Use of this tool does not establish a medical professional – patient relationship.<br>
-        3. Understanding that other patient populations may differ from those upon which the model was constructed and that the source data has missing data for many patients for some variables included in the model, limiting the validity, usefulness, and accuracy of any estimate of risk generated by the calculator.
+        By using this tool, you agree to the following terms:<br>
+        1. No Guarantees or Liability:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	The developers of this calculator do not guarantee the accuracy of any estimates generated by the tool.<br>
+        2. Not Medical Advice or Relationship:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	This tool is for general information and educational purposes only.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	Use of this tool does not constitute medical advice, an opinion, diagnosis, service, or recommendation of any kind from a healthcare provider.<br>
+        3. Model Limitations:<br> 
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	Estimates generated by the tool may not be applicable to all patient populations.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	The source data may have missing information for some variables, which limits the validity, usefulness, and accuracy of the risk estimates provided by the calculator.
     </div>
     <script>
         function showNomogram() {
